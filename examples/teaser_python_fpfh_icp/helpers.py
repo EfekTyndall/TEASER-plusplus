@@ -9,11 +9,11 @@ def pcd2xyz(pcd):
 def extract_fpfh(pcd, voxel_size):
   radius_normal = voxel_size * 2
   pcd.estimate_normals(
-      o3d.geometry.KDTreeSearchParamHybrid(radius=radius_normal, max_nn=30))
+      o3d.geometry.KDTreeSearchParamHybrid(radius=radius_normal, max_nn=50))
 
-  radius_feature = voxel_size * 5
+  radius_feature = voxel_size * 3
   fpfh = o3d.pipelines.registration.compute_fpfh_feature(
-      pcd, o3d.geometry.KDTreeSearchParamHybrid(radius=radius_feature, max_nn=100))
+      pcd, o3d.geometry.KDTreeSearchParamHybrid(radius=radius_feature, max_nn=200))
   return np.array(fpfh.data).T
 
 def find_knn_cpu(feat0, feat1, knn=1, return_distance=False):
@@ -54,7 +54,7 @@ def get_teaser_solver(noise_bound):
     solver_params.rotation_estimation_algorithm = \
         teaserpp_python.RobustRegistrationSolver.ROTATION_ESTIMATION_ALGORITHM.GNC_TLS
     solver_params.rotation_gnc_factor = 1.4
-    solver_params.rotation_max_iterations = 10000
+    solver_params.rotation_max_iterations = 100000
     solver_params.rotation_cost_threshold = 1e-16
     solver = teaserpp_python.RobustRegistrationSolver(solver_params)
     return solver
